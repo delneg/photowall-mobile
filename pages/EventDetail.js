@@ -9,7 +9,8 @@ import {
   TextInput,
   ScrollView,
   Button,
-  Image
+  Image,
+  WebView
 } from 'react-native';
 import appData from '../app.json'
 import {Container, List, Left, Body, Right, Content, ListItem, Text} from 'native-base';
@@ -56,6 +57,10 @@ export default class EventDetail extends React.Component {
       <Container>
         <Content>
           <Text>А здесь типо WebView для {params.event.text} по id {params.event.id}</Text>
+          <WebView
+            source={{uri: 'http://www.erikjohanssonphoto.com/work'}}
+            style={{marginTop: 20,height: 526}}
+          />
           {!this.state.logged_in &&
           <Button onPress={() => navigate('Login')} title="Войти и загрузить свою фотографию"/>
           }
