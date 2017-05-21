@@ -11,6 +11,7 @@ import {
   Button,
   Image,
   TouchableHighlight,
+  AsyncStorage
 } from 'react-native';
 
 
@@ -25,8 +26,26 @@ export default class HomeScreen extends React.Component {
     super(props);
     this.state = {
       logged_in: false,
+      token: ''
     };
   }
+  componentDidMount() {
+    this._loadInitialState().done();
+  }
+
+  _loadInitialState = async () => {
+    try {
+      let value = await AsyncStorage.getItem(appData.storageKey);
+      if (value !== null){
+        this.setState({logged_in: true, token: value});
+        console.log(`Recovered token ${value}`)
+      } else {
+        console.log("Couldn't recover the token");
+      }
+    } catch (error) {
+      console.log('AsyncStorage error: ' + error.message);
+    }
+  };
 
 
   static navigationOptions = {
@@ -62,7 +81,7 @@ export default class HomeScreen extends React.Component {
       {image: 'http://placekitten.com/g/600/200', text: 'Мероприятие 3', 'id': 32},
     ];
     let piter_items = [
-      {image: 'http://placekitten.com/g/700/200', text: 'Мероприятие 4', 'id': 44},
+      {image: 'http://placekitten.com/g/700/200', text: 'Мероприятие 8797', 'id': 44},
       {image: 'http://placekitten.com/g/300/200', text: 'Мероприятие 5', 'id': 56},
       {image: 'http://placekitten.com/g/800/200', text: 'Мероприятие 6', 'id': 66},
     ];
@@ -91,9 +110,8 @@ export default class HomeScreen extends React.Component {
             })
           }
           {!this.state.logged_in &&
-          <Button onPress={() => navigate('Login')} title="Войти и загрузить свою фотографию"/>
+            <Button onPress={() => navigate('Login')} title="Войти и загрузить свою фотографию"/>
           }
-
         </Content>
       </Container>
     );

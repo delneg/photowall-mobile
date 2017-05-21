@@ -8,7 +8,8 @@ import {
   Text,
   View,
   TextInput,
-  ScrollView
+  ScrollView,
+  AsyncStorage,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -22,6 +23,13 @@ export default class Login extends Component {
     //execute any code here
     console.log(this,"pressed!")
   }
+  async _onValueChange(item, selectedValue) {
+    try {
+      await AsyncStorage.setItem(item, selectedValue);
+    } catch (error) {
+      console.log('AsyncStorage error: ' + error.message);
+    }
+  }
   onCancel(){
     this._username.setNativeProps({text: ''});
     this._password.setNativeProps({text: ''});
@@ -29,10 +37,9 @@ export default class Login extends Component {
   onSignIn(){
     console.log("Signing in...");
     let body =  JSON.stringify({
-      username: this._username.username,
-      password: this._password.password,
+      username: this.state.username,
+      password: this.state.password,
     });
-    console.log(body);
     fetch(`${appData.serverHost}/api/v1/api-token-auth/`, {
       method: 'POST',
       headers: {
@@ -41,21 +48,18 @@ export default class Login extends Component {
       },
       body: body,
     })
-      .then((response) => {
-        console.log("Success!");
-        console.log(response);
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log('Success!');
+        console.log(responseJson.token);
+        this._onValueChange(appData.storageKey, responseJson.token);
       })
       .catch((error) => {
         console.log("Error!");
         console.error(error);
       });
   }
-  init(){
-    this._username.setNativeProps({text: 'delneg'});
-    this._password.setNativeProps({text: '14331433q'});
-  }
   componentDidMount(){
-    this.init();
   }
   render() {
     return (
@@ -69,17 +73,17 @@ export default class Login extends Component {
         </Container>
         <Container>
           <Label text="Username"/>
-          <TextInput ref={component => this._username = component}
+          <TextInput ref={(component) => {this.username = component}}
                      style={styles.textInput}
-                     onChange={(event) => this.setState({username:event.nativeEvent.text})}
+                     onChangeText={(username) => this.setState({username})}
           />
         </Container>
         <Container>
           <Label text="Password"/>
-          <TextInput ref={component => this._password = component}
+          <TextInput ref={(component) => {this.password = component}}
                      secureTextEntry={true}
                      style={styles.textInput}
-                     onChange={(event) => this.setState({password:event.nativeEvent.text})}
+                     onChangeText={(password) => this.setState({password})}
           />
         </Container>
         <View style={styles.footer}>

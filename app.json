@@ -1,5 +1,6 @@
 {
   "name": "photowall",
   "displayName": "photowall",
-  "serverHost":"http://10.0.2.2:8010"
+  "serverHost":"http://10.0.2.2:8010",
+  "storageKey":"auth_token"
 }
