@@ -10,7 +10,8 @@ import {
   ScrollView,
   Button,
   Image,
-  WebView
+  WebView,
+  AsyncStorage
 } from 'react-native';
 import appData from '../app.json'
 import {Container, List, Left, Body, Right, Content, ListItem, Text} from 'native-base';
@@ -24,9 +25,26 @@ export default class EventDetail extends React.Component {
     };
   }
 
+  componentDidMount() {
+    this._loadInitialState().done();
+  }
+
+  _loadInitialState = async () => {
+    try {
+      let value = await AsyncStorage.getItem(appData.storageKey);
+      if (value !== null) {
+        this.setState({logged_in: true, token: value});
+        console.log(`Recovered token ${value}`)
+      } else {
+        console.log("Couldn't recover the token");
+      }
+    } catch (error) {
+      console.log('AsyncStorage error: ' + error.message);
+    }
+  };
 
   static navigationOptions = {
-    title: ({state}) => `${state.params.event.text}`,
+    title: ({state}) => `${state.params.event.name}`,
   };
 
 
@@ -56,10 +74,12 @@ export default class EventDetail extends React.Component {
     return (
       <Container>
         <Content>
-          <Text>А здесь типо WebView для {params.event.text} по id {params.event.id}</Text>
+          <Text>А здесь типо WebView для {params.event.name} по id {params.event.id}</Text>
+          <Text>Описание: {params.event.description}</Text>
+          <Text>Начало: {params.event.start_date}, конец: {params.event.end_date}</Text>
           <WebView
             source={{uri: 'http://www.erikjohanssonphoto.com/work'}}
-            style={{marginTop: 20,height: 526}}
+            style={{marginTop: 20, height: 526}}
           />
           {!this.state.logged_in &&
           <Button onPress={() => navigate('Login')} title="Войти и загрузить свою фотографию"/>

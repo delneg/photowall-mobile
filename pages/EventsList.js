@@ -26,17 +26,36 @@ export default class HomeScreen extends React.Component {
     super(props);
     this.state = {
       logged_in: false,
-      token: ''
+      token: '',
+      events: [],
+      loaded: false
     };
   }
+
   componentDidMount() {
     this._loadInitialState().done();
+    fetch(`${appData.serverHost}/api/events/`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
+      },
+    }).then((response) => response.json())
+      .then((responseJson) => {
+        console.log('Success!');
+        this.state.events = responseJson.results;
+        this.state.loaded = true;
+      })
+      .catch((error) => {
+        console.log("Error!");
+        console.error(error);
+      });
   }
 
   _loadInitialState = async () => {
     try {
       let value = await AsyncStorage.getItem(appData.storageKey);
-      if (value !== null){
+      if (value !== null) {
         this.setState({logged_in: true, token: value});
         console.log(`Recovered token ${value}`)
       } else {
@@ -92,25 +111,22 @@ export default class HomeScreen extends React.Component {
     return (
       <Container>
         <Content>
-          {lists_obj.map((obj, i) => {
-            return <View key={i}>
-                      <ListItem itemDivider>
-                        <Text>{obj.name}</Text>
-                      </ListItem>
-                      <List dataArray={obj.items} renderRow={(data) =>
-                        <ListItem style={styles.listItem}>
-                          <TouchableHighlight style={stylesheet.backgroundImage} onPress={() => navigate('EventDetail',{'event':data})}>
-                            <Image source={{uri: data.image}} >
-                              <Text style={styles.hoverText}>{data.text}</Text>
-                            </Image>
-                          </TouchableHighlight>
-                        </ListItem>
-                      }/>
-                   </View>
-            })
+          {this.state.loaded &&
+
+                <List dataArray={this.state.events} renderRow={(data) =>
+                  <ListItem style={styles.listItem}>
+                    <TouchableHighlight style={stylesheet.backgroundImage}
+                                        onPress={() => navigate('EventDetail', {'event': data})}>
+                      <Image source={{uri: data.image_set[0].image}}>
+                        <Text style={styles.hoverText}>{data.name}</Text>
+                      </Image>
+                    </TouchableHighlight>
+                  </ListItem>
+                }/>
           }
+
           {!this.state.logged_in &&
-            <Button onPress={() => navigate('Login')} title="Войти и загрузить свою фотографию"/>
+          <Button onPress={() => navigate('Login')} title="Войти и загрузить свою фотографию"/>
           }
         </Content>
       </Container>
