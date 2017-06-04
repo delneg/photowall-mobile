@@ -14,6 +14,7 @@ import {
   AsyncStorage
 } from 'react-native';
 import Modal from 'react-native-modalbox';
+import ImagePicker from 'react-native-image-picker'
 import Moment from 'moment';
 import 'moment/locale/ru'
 import appData from '../app.json'
@@ -43,8 +44,10 @@ export default class EventDetail extends React.Component {
     super(props);
     this.state = {
       logged_in: false,
+      token: '',
       fab_active: false,
-      modal_open: false
+      modal_open: false,
+      uploadedPhoto: ''
     };
   }
 
@@ -71,6 +74,45 @@ export default class EventDetail extends React.Component {
   };
 
 
+  showImagePicker(){
+    let options = {
+      title: 'Выберите фотографию для загрузки',
+      cancelButtonTitle: 'Отменить',
+      takePhotoButtonTitle: 'Сфотографировать..',
+      chooseFromLibraryButtonTitle: 'Выбрать из галереи..',
+      mediaType: 'photo',
+      allowsEditing: true,
+      storageOptions: {
+        skipBackup: false,
+        path: 'images',
+        cameraRoll: true
+      }
+    };
+
+    /**
+     * The first arg is the options object for customization (it can also be null or omitted for default options),
+     * The second arg is the callback which sends object: response (more info below in README)
+     */
+    ImagePicker.showImagePicker(options, (response) => {
+      console.log('User picked an image');
+
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      }
+      else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      }
+      else {
+        let source = { uri: response.uri };
+        console.log(source);
+        // You can also display the image using data:
+        // let source = { uri: 'data:image/jpeg;base64,' + response.data };
+        this.setState({
+          uploadedPhoto: source
+        });
+      }
+    });
+  }
   render() {
     const {navigate} = this.props.navigation;
     const {params} = this.props.navigation.state;
@@ -153,10 +195,26 @@ export default class EventDetail extends React.Component {
           style={stylesheet.modal}
           ref={"modal"}
           swipeToClose={true}
+          onOpened={()=> this.setState({fab_active: false})}
           onClosed={() => this.setState({modal_open: false})}
         >
-
-          <Text>Basic modal</Text>
+          <Button style={{position:'absolute',top:0,right:0,left:0,height:40}} full onPress={() => this.showImagePicker()}>
+            <Text>Выбрать фото...</Text>
+          </Button>
+          {this.state.uploadedPhoto !== '' &&
+          <Card style={{marginTop:45}}>
+            <CardItem>
+              <Left>
+                <Body>
+                <Text>Сейчас выбрано</Text>
+                </Body>
+              </Left>
+            </CardItem>
+            <CardItem cardBody>
+              <Image source={this.state.uploadedPhoto} style={{marginTop: 0, width: width, height: 300}}/>
+            </CardItem>
+          </Card>
+          }
 
         </Modal>
         <Fab
