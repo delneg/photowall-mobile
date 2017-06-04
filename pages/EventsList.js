@@ -128,7 +128,7 @@ export default class HomeScreen extends React.Component {
 
               <TouchableHighlight style={stylesheet.backgroundImage}
                                   onPress={() => navigate('EventDetail', {'event': data})}>
-                <Image source={{uri: data.image_set[0].image}}>
+                <Image source={{uri: `${appData.serverHost}${data.image_set[0].image}`}}>
                   <Text style={styles.hoverText}>{data.name}</Text>
                 </Image>
               </TouchableHighlight>
