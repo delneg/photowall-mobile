@@ -13,6 +13,7 @@ import {
   Dimensions,
   AsyncStorage
 } from 'react-native';
+import Modal from 'react-native-modalbox';
 import Moment from 'moment';
 import 'moment/locale/ru'
 import appData from '../app.json'
@@ -42,7 +43,8 @@ export default class EventDetail extends React.Component {
     super(props);
     this.state = {
       logged_in: false,
-      fab_active: false
+      fab_active: false,
+      modal_open: false
     };
   }
 
@@ -81,12 +83,18 @@ export default class EventDetail extends React.Component {
         padding: 0,
         margin: 0,
       },
+      modal: {
+        justifyContent: 'center',
+        alignItems: 'center'
+      },
     };
     const stylesheet = StyleSheet.create(styles);
     Moment.locale('ru');
     return (
       <Container>
         <Content>
+
+
           <Card>
             <CardItem header>
               <Text style={{fontSize: 24, fontWeight: '700'}}>{capitalize(params.event.name)}</Text>
@@ -108,7 +116,6 @@ export default class EventDetail extends React.Component {
 
           {params.event.image_set.map((image, i) => {
             let image_url = `${appData.serverHost}${image.image}`;
-            console.log(image_url);
             return <Card key={i} style={{flex: 0}}>
               <CardItem>
                 <Left>
@@ -140,7 +147,18 @@ export default class EventDetail extends React.Component {
 
 
         </Content>
+        <Modal
+          position={"top"}
+          isOpen={this.state.modal_open}
+          style={stylesheet.modal}
+          ref={"modal"}
+          swipeToClose={true}
+          onClosed={() => this.setState({modal_open: false})}
+        >
 
+          <Text>Basic modal</Text>
+
+        </Modal>
         <Fab
           active={this.state.fab_active}
           direction="up"
@@ -150,7 +168,7 @@ export default class EventDetail extends React.Component {
           onPress={() => this.setState({fab_active: !this.state.fab_active})}>
           <Icon name="list"/>
           {this.state.logged_in &&
-          <Button style={{backgroundColor: '#34A34F'}} onPress={console.log('pressed upload')}>
+          <Button style={{backgroundColor: '#34A34F'}} onPress={() => this.setState({modal_open: !this.state.modal_open})}>
             <Icon name="ios-cloud-upload"/>
           </Button>
           }
