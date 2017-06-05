@@ -20,20 +20,18 @@ import 'moment/locale/ru'
 import appData from '../app.json'
 import {
   Container,
-  Thumbnail,
   Button,
   Card,
   CardItem,
   Badge,
-  List,
   Left,
   Body,
-  Right,
   Content,
-  ListItem,
   Text,
   Icon,
   Fab,
+  Input,
+  Item,
   Row
 } from 'native-base';
 
@@ -47,6 +45,7 @@ export default class EventDetail extends React.Component {
       token: '',
       fab_active: false,
       modal_open: false,
+      modalCommentInput: '',
       uploadedPhoto: ''
     };
   }
@@ -73,8 +72,14 @@ export default class EventDetail extends React.Component {
     title: ({state}) => `${capitalize(state.params.event.name)}`,
   };
 
+  uploadClick() {
+    let photo = this.state.uploadedPhoto;
+    let comment = this.state.modalCommentInput;
+    let event_id  =  this.props.navigation.state.params.event.id;
+    console.log(photo,comment,event_id);
+  }
 
-  showImagePicker(){
+  showImagePicker() {
     let options = {
       title: 'Выберите фотографию для загрузки',
       cancelButtonTitle: 'Отменить',
@@ -103,7 +108,7 @@ export default class EventDetail extends React.Component {
         console.log('ImagePicker Error: ', response.error);
       }
       else {
-        let source = { uri: response.uri };
+        let source = {uri: response.uri};
         console.log(source);
         // You can also display the image using data:
         // let source = { uri: 'data:image/jpeg;base64,' + response.data };
@@ -113,6 +118,7 @@ export default class EventDetail extends React.Component {
       }
     });
   }
+
   render() {
     const {navigate} = this.props.navigation;
     const {params} = this.props.navigation.state;
@@ -162,8 +168,8 @@ export default class EventDetail extends React.Component {
               <CardItem>
                 <Left>
                   <Body>
-                    <Text>{image.uploaded_by.username}</Text>
-                    <Text note>{Moment(image.created_at).format('LLLL')}</Text>
+                  <Text>{image.uploaded_by.username}</Text>
+                  <Text note>{Moment(image.created_at).format('LLLL')}</Text>
                   </Body>
                 </Left>
               </CardItem>
@@ -171,49 +177,69 @@ export default class EventDetail extends React.Component {
                 <Image style={{height: 200, width: width}} resizeMode='cover' source={{uri: image_url}}/>
               </CardItem>
               <CardItem>
-                  {image.published &&
-                  <Row>
-                    <Icon name="ios-checkmark-circle"/>
-                    <Text>Опубликовано</Text>
-                  </Row>
-                  }
-                  {!image.published &&
-                  <Row>
-                    <Icon name="ios-close-circle"/>
-                    <Text>Не опубликовано</Text>
-                  </Row>
-                  }
+                {image.published &&
+                <Row>
+                  <Icon name="ios-checkmark-circle"/>
+                  <Text>Опубликовано</Text>
+                </Row>
+                }
+                {!image.published &&
+                <Row>
+                  <Icon name="ios-close-circle"/>
+                  <Text>Не опубликовано</Text>
+                </Row>
+                }
               </CardItem>
             </Card>
           })}
-
-
         </Content>
+
         <Modal
           position={"top"}
           isOpen={this.state.modal_open}
           style={stylesheet.modal}
           ref={"modal"}
           swipeToClose={true}
-          onOpened={()=> this.setState({fab_active: false})}
+          onOpened={() => this.setState({fab_active: false})}
           onClosed={() => this.setState({modal_open: false})}
         >
-          <Button style={{position:'absolute',top:0,right:0,left:0,height:40}} full onPress={() => this.showImagePicker()}>
+          <Button style={{position: 'absolute', top: 0, right: 0, left: 0, height: 40}} full
+                  onPress={() => this.showImagePicker()}>
             <Text>Выбрать фото...</Text>
           </Button>
+
           {this.state.uploadedPhoto !== '' &&
-          <Card style={{marginTop:45}}>
-            <CardItem>
-              <Left>
-                <Body>
-                <Text>Сейчас выбрано</Text>
-                </Body>
-              </Left>
-            </CardItem>
-            <CardItem cardBody>
-              <Image source={this.state.uploadedPhoto} style={{marginTop: 0, width: width, height: 300}}/>
-            </CardItem>
-          </Card>
+          <ScrollView>
+            <Card style={{marginTop: 45}}>
+              <CardItem>
+                <Left>
+                  <Body>
+                  <Text>Сейчас выбрано</Text>
+                  </Body>
+                </Left>
+              </CardItem>
+              <CardItem cardBody>
+                <Image source={this.state.uploadedPhoto}
+                       style={{marginTop: 0, width: width, height: 350}}/>
+              </CardItem>
+              <CardItem>
+                <Item regular>
+                  <Input
+                    ref={(c) => {
+                      this._commentInput = c
+                    }}
+                    onChangeText={(text) => {
+                      this.setState({modalCommentInput: text})
+                    }}
+                    placeholder='Добавить комментарий'/>
+                </Item>
+
+              </CardItem>
+              <Button full onPress={this.uploadClick.bind(this)}>
+                <Text>Загрузить</Text>
+              </Button>
+            </Card>
+          </ScrollView>
           }
 
         </Modal>
@@ -226,7 +252,8 @@ export default class EventDetail extends React.Component {
           onPress={() => this.setState({fab_active: !this.state.fab_active})}>
           <Icon name="list"/>
           {this.state.logged_in &&
-          <Button style={{backgroundColor: '#34A34F'}} onPress={() => this.setState({modal_open: !this.state.modal_open})}>
+          <Button style={{backgroundColor: '#34A34F'}}
+                  onPress={() => this.setState({modal_open: !this.state.modal_open})}>
             <Icon name="ios-cloud-upload"/>
           </Button>
           }
