@@ -14,7 +14,8 @@ import {
   AsyncStorage
 } from 'react-native';
 import Modal from 'react-native-modalbox';
-import ImagePicker from 'react-native-image-picker'
+import ImagePicker from 'react-native-image-picker';
+import Toast from 'react-native-root-toast';
 import Moment from 'moment';
 import 'moment/locale/ru'
 import appData from '../app.json'
@@ -51,31 +52,33 @@ export default class EventDetail extends React.Component {
     };
   }
 
-  componentDidMount() {
-    this._loadInitialState().done();
-    const event_id  = this.props.navigation.state.params.event.id;
-    setInterval(() => {
-      fetch(`${appData.serverHost}/api/event/${event_id}`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json; charset=utf-8',
-        },
-      }).then((response) => response.json())
-        .then((responseJson) => {
-          console.log('Received new photos');
-          this.setState({photos: responseJson.image_set});
-        })
-        .catch((error) => {
-          console.log("Error when receiving new photos");
-          console.error(error);
-        });
-    }, 5000)
+  _fetchNewPhotos() {
+    const event_id = this.props.navigation.state.params.event.id;
+    fetch(`${appData.serverHost}/api/event/${event_id}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
+      },
+    }).then((response) => response.json())
+      .then((responseJson) => {
+        console.log('Received new photos');
+        this.setState({photos: responseJson.image_set});
+      })
+      .catch((error) => {
+        console.log("Error when receiving new photos");
+        console.error(error);
+      });
   }
 
-  componentWillMount() {
+  componentDidMount() {
+    this._loadInitialState().done();
     this.setState({photos: this.props.navigation.state.params.event.image_set});
+
+    this._fetchNewPhotos();
+    setInterval(this._fetchNewPhotos.bind(this), 5000)
   }
+
 
   _loadInitialState = async () => {
     try {
@@ -99,7 +102,48 @@ export default class EventDetail extends React.Component {
     let photo = this.state.uploadedPhoto;
     let comment = this.state.modalCommentInput;
     let event_id = this.props.navigation.state.params.event.id;
-    console.log(photo, comment, event_id);
+    let photo_obj = {
+      uri: photo.uri,
+      type: 'image/jpeg',
+      name: Math.random().toString(36).substring(7) + '.jpg',
+    };
+
+    let form = new FormData();
+    form.append("image", photo_obj);
+    form.append('comment', comment);
+    form.append('event', event_id);
+
+    fetch(`${appData.serverHost}/image/upload/`, {
+        body: form,
+        method: "POST",
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': 'Token ' + this.state.token
+        }
+      }
+    ).then((response) => response.json())
+      .catch((error) => {
+        let toast = Toast.show(`При загрузке фотографии произошла ошибка - ${error}`, {
+          duration: Toast.durations.LONG,
+          backgroundColor: '#d75452',
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+        });
+      })
+      .then((responseData) => {
+        let message = `Фотография успешно загружена под номером #${responseData.id}.Она появится в галерее после проверки модератором.`;
+        let toast = Toast.show(message, {
+          duration: Toast.durations.LONG,
+          position: Toast.positions.BOTTOM,
+          backgroundColor: '#5fb660',
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+        });
+        this.setState({modal_open: false})
+      }).done();
   }
 
   showImagePicker() {
@@ -199,6 +243,11 @@ export default class EventDetail extends React.Component {
               <CardItem cardBody>
                 <Image style={{height: 200, width: width}} resizeMode='cover' source={{uri: image_url}}/>
               </CardItem>
+              {image.comment !== '' &&
+              <CardItem>
+                <Text>{image.comment}</Text>
+              </CardItem>
+              }
               <CardItem>
                 {image.published &&
                 <Row>
@@ -226,14 +275,15 @@ export default class EventDetail extends React.Component {
           onOpened={() => this.setState({fab_active: false})}
           onClosed={() => this.setState({modal_open: false})}
         >
-          <Button style={{position: 'absolute', top: 0, right: 0, left: 0, height: 40}} full
+          <Button style={{height: 40}}
+                  full
                   onPress={() => this.showImagePicker()}>
             <Text>Выбрать фото...</Text>
           </Button>
 
           {this.state.uploadedPhoto !== '' &&
           <ScrollView>
-            <Card style={{marginTop: 45}}>
+            <Card style={{marginTop: 0}}>
               <CardItem>
                 <Left>
                   <Body>
