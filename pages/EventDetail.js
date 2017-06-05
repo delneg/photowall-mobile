@@ -43,6 +43,7 @@ export default class EventDetail extends React.Component {
     this.state = {
       logged_in: false,
       token: '',
+      photos: [],
       fab_active: false,
       modal_open: false,
       modalCommentInput: '',
@@ -52,6 +53,28 @@ export default class EventDetail extends React.Component {
 
   componentDidMount() {
     this._loadInitialState().done();
+    const event_id  = this.props.navigation.state.params.event.id;
+    setInterval(() => {
+      fetch(`${appData.serverHost}/api/event/${event_id}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+      }).then((response) => response.json())
+        .then((responseJson) => {
+          console.log('Received new photos');
+          this.setState({photos: responseJson.image_set});
+        })
+        .catch((error) => {
+          console.log("Error when receiving new photos");
+          console.error(error);
+        });
+    }, 5000)
+  }
+
+  componentWillMount() {
+    this.setState({photos: this.props.navigation.state.params.event.image_set});
   }
 
   _loadInitialState = async () => {
@@ -75,8 +98,8 @@ export default class EventDetail extends React.Component {
   uploadClick() {
     let photo = this.state.uploadedPhoto;
     let comment = this.state.modalCommentInput;
-    let event_id  =  this.props.navigation.state.params.event.id;
-    console.log(photo,comment,event_id);
+    let event_id = this.props.navigation.state.params.event.id;
+    console.log(photo, comment, event_id);
   }
 
   showImagePicker() {
@@ -162,7 +185,7 @@ export default class EventDetail extends React.Component {
             </CardItem>
           </Card>
 
-          {params.event.image_set.map((image, i) => {
+          {this.state.photos.map((image, i) => {
             let image_url = `${appData.serverHost}${image.image}`;
             return <Card key={i} style={{flex: 0}}>
               <CardItem>
