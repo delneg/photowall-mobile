@@ -6,10 +6,8 @@ import React, {Component} from 'react';
 import {
   StyleSheet,
   View,
-  TextInput,
   ScrollView,
   Image,
-  WebView,
   Dimensions,
   AsyncStorage
 } from 'react-native';
