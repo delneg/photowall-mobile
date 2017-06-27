@@ -82,7 +82,9 @@ export default class HomeScreen extends React.Component {
     this._loadInitialData().done();
   }
 
-
+  componentWillUnmount(){
+    this.setState({logged_in: false, token: ''});
+  }
   static navigationOptions = {
 
     title: 'Список мероприятий',
