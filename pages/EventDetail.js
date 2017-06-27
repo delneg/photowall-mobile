@@ -72,12 +72,13 @@ export default class EventDetail extends React.Component {
   componentDidMount() {
     this._loadInitialState().done();
     this.setState({photos: this.props.navigation.state.params.event.image_set});
-
-    this._fetchNewPhotos();
-    setInterval(this._fetchNewPhotos.bind(this), 5000)
+    let photosInterval = setInterval(this._fetchNewPhotos.bind(this), 5000);
+    this.setState({interval:photosInterval});
   }
 
-
+  componentWillUnmount(){
+    clearInterval(this.state.interval);
+  }
   _loadInitialState = async () => {
     try {
       let value = await AsyncStorage.getItem(appData.storageKey);
@@ -210,12 +211,12 @@ export default class EventDetail extends React.Component {
 
           <Card>
             <CardItem header>
-              <Text style={{fontSize: 24, fontWeight: '700'}}>{capitalize(params.event.name)}</Text>
+              <Text style={{fontSize: 24, fontWeight: '700'}}>{params.event.name}</Text>
             </CardItem>
             <CardItem>
               <Body>
               <Text>
-                {capitalize(params.event.description)}
+                {params.event.description}
               </Text>
               </Body>
             </CardItem>

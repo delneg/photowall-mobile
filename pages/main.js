@@ -3,13 +3,6 @@
  */
 import React, {Component} from 'react';
 import {
-  Container, Header, Title, Content,
-  Footer, FooterTab, Button, Icon
-} from 'native-base';
-import {
-  StyleSheet,
-  Text,
-  View,
   AppRegistry,
 } from 'react-native';
 import {StackNavigator} from 'react-navigation';

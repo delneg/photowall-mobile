@@ -20,8 +20,7 @@ export default class Login extends Component {
       username: '',
       password: '',
       loading: false
-  }
-    ;
+    };
   }
 
   async _onValueChange(item, selectedValue) {
@@ -55,7 +54,6 @@ export default class Login extends Component {
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState({loading: false});
-
         if (responseJson.token) {
           console.log(`Signed in succesfully with token ${responseJson.token}`);
           this._onValueChange(appData.storageKey, responseJson.token);
@@ -95,9 +93,7 @@ export default class Login extends Component {
               hideOnPress: true,
             });
           }
-
         }
-
       })
       .catch((error) => {
         console.log("Error!");
@@ -134,16 +130,14 @@ export default class Login extends Component {
             </Item>
             <Button block onPress={this.onSignIn.bind(this)}>
               {this.state.loading &&
-                <Spinner color='green' />
+              <Spinner color='green'/>
               }
               <Text>Войти</Text>
             </Button>
           </Form>
         </Content>
       </Container>
-
     );
-
   }
 }
 const styles = StyleSheet.create({});
