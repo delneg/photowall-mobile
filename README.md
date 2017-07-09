@@ -38,49 +38,27 @@ GET
 
 **Формат возвращаемых данных:**
 [ {
-
-      &quot;id&quot;: 3,
-
-      &quot;name&quot;: &quot;Blockchain &amp; Bitcoin Conference St. Petersburg&quot;,
-
-      &quot;description&quot;: &quot;Уникальное мероприятиe на территории СНГ и Европы, которое соберёт вместе истинных криптоголиков для определения понятия «Blockchain» и его влияния на будущее финансовой системы мира.&quot;,
-
-      &quot;start\_date&quot;: &quot;2017-06-22T06:00:00+0000&quot;,
-
-      &quot;end\_date&quot;: &quot;2017-06-22T20:00:00+0000&quot;,
-
-      &quot;image\_set&quot;: [
-
+      "id": 3,
+      "name": "Blockchain & Bitcoin Conference St. Petersburg",
+      "description": "Уникальное мероприятиe на территории СНГ и Европы, которое соберёт вместе истинных криптоголиков для определения понятия «Blockchain» и его влияния на будущее финансовой системы мира.",
+      "start_date": "2017-06-22T06:00:00+0000",
+      "end_date": "2017-06-22T20:00:00+0000",
+      "image_set": [
         {
-
-          &quot;id&quot;: 37,
-
-          &quot;image&quot;: &quot;/media/images/data-image-jpeg\_16.jpeg&quot;,
-
-          &quot;uploaded\_by&quot;: {
-
-            &quot;id&quot;: &quot;a5488ad7-d32d-4e92-9844-e968069dd41c&quot;,
-
-            &quot;username&quot;: &quot;username&quot;,
-
-            &quot;first\_name&quot;: &quot;&quot;,
-
-            &quot;last\_name&quot;: &quot;&quot;
-
+          "id": 37,
+          "image": "/media/images/data-image-jpeg_16.jpeg",
+          "uploaded_by": {
+            "id": "a5488ad7-d32d-4e92-9844-e968069dd41c",
+            "username": "username",
+            "first_name": "",
+            "last_name": ""
           },
-
-          &quot;event&quot;: 3,
-
-          &quot;published&quot;: true,
-
-          &quot;created\_at&quot;: &quot;2017-06-12T18:56:44+0000&quot;,
-
-          &quot;comment&quot;: &quot;&quot;
-
+          "event": 3,
+          "published": true,
+          "created_at": "2017-06-12T18:56:44+0000",
+          "comment": ""
         },
-
       ]
-
 ]
 
 ## 1.4 Получение данных о конкретном мероприятии
@@ -99,44 +77,25 @@ id – идентификатор мероприятия, число
 
 **Формат возвращаемых данных:**
 
-{&quot;id&quot;: 3,
-
-  &quot;name&quot;: &quot;Blockchain &amp; Bitcoin Conference St. Petersburg&quot;,
-
-  &quot;description&quot;: &quot;Уникальное мероприятиe на территории СНГ и Европы, которое соберёт вместе истинных криптоголиков для определения понятия «Blockchain» и его влияния на будущее финансовой системы мира.&quot;,
-
-  &quot;start\_date&quot;: &quot;2017-06-22T06:00:00+0000&quot;,
-
-  &quot;end\_date&quot;: &quot;2017-06-22T20:00:00+0000&quot;,
-
-  &quot;image\_set&quot;: [
-
+{"id": 3,
+  "name": "Blockchain & Bitcoin Conference St. Petersburg",
+  "description": "Уникальное мероприятиe на территории СНГ и Европы, которое соберёт вместе истинных криптоголиков для определения понятия «Blockchain» и его влияния на будущее финансовой системы мира.",
+  "start_date": "2017-06-22T06:00:00+0000",
+  "end_date": "2017-06-22T20:00:00+0000",
+  "image_set": [
     {
-
-      &quot;id&quot;: 37,
-
-      &quot;image&quot;: &quot;/media/images/data-image-jpeg\_16.jpeg&quot;,
-
-      &quot;uploaded\_by&quot;: {
-
-        &quot;id&quot;: &quot;a5488ad7-d32d-4e92-9844-e968069dd41c&quot;,
-
-        &quot;username&quot;: &quot;username&quot;,
-
-        &quot;first\_name&quot;: &quot;&quot;,
-
-        &quot;last\_name&quot;: &quot;&quot;
-
+      "id": 37,
+      "image": "/media/images/data-image-jpeg_16.jpeg",
+      "uploaded_by": {
+        "id": "a5488ad7-d32d-4e92-9844-e968069dd41c",
+        "username": "username",
+        "first_name": "",
+        "last_name": ""
       },
-
-      &quot;event&quot;: 3,
-
-      &quot;published&quot;: true,
-
-      &quot;created\_at&quot;: &quot;2017-06-12T18:56:44+0000&quot;,
-
-      &quot;comment&quot;: &quot;&quot;
-
+      "event": 3,
+      "published": true,
+      "created_at": "2017-06-12T18:56:44+0000",
+      "comment": ""
     }]}
 
 ## 1.5 Загрузка фотографии к мероприятию
@@ -168,11 +127,8 @@ headers: {
 **Формат возвращаемых данных:**
 
 {
+  "id": 38,
+  "image": "photo_2017-05-19_19-56-51.jpg",
+  "event": 3,
+  "comment": ""}
 
-  &quot;id&quot;: 38,
-
-  &quot;image&quot;: &quot;photo\_2017-05-19\_19-56-51.jpg&quot;,
-
-  &quot;event&quot;: 3,
-
-  &quot;comment&quot;: &quot;&quot;}
